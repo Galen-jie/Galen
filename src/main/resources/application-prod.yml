@@ -1,0 +1,87 @@
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:galen_seckill}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root123}
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 20
+      min-idle: 20
+      max-active: 100
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall,slf4j
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: admin
+        login-password: admin123
+
+  # Redis配置
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    timeout: 10000ms
+    lettuce:
+      pool:
+        max-active: 500
+        max-idle: 100
+        min-idle: 50
+        max-wait: -1
+
+  # Session配置
+  session:
+    store-type: redis
+    redis:
+      namespace: galen:session
+    timeout: 1800
+
+  # RocketMQ配置
+  rocketmq:
+    name-server: ${ROCKETMQ_NAMESRV:rocketmq-namesrv:9876}
+    producer:
+      group: galen-producer-group
+      send-message-timeout: 3000
+      retry-times-when-send-failed: 3
+      retry-times-when-send-async-failed: 3
+
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      cache-null-values: false
+
+# Redisson配置
+redisson:
+  config: |
+    singleServerConfig:
+      address: redis://${REDIS_HOST:redis}:${REDIS_PORT:6379}
+      database: 0
+      connectionPoolSize: 100
+      connectionMinimumIdleSize: 20
+      idleConnectionTimeout: 10000
+      connectTimeout: 10000
+      timeout: 3000
+
+# 日志配置
+logging:
+  level:
+    com.galen.seckill: info
+    org.springframework: warn
