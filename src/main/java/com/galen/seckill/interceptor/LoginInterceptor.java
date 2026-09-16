@@ -27,7 +27,6 @@ public class LoginInterceptor implements HandlerInterceptor {
             log.warn("用户未登录，请求路径: {}", request.getRequestURI());
             throw new BusinessException(ResultCode.UNAUTHORIZED);
         }
-
         return true;
     }
 }

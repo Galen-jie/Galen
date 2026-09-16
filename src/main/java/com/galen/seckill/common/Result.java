@@ -103,6 +103,13 @@ public class Result<T> implements Serializable {
     }
 
     /**
+     * 失败响应（带错误码和消息）
+     */
+    public static <T> Result<T> error(Integer code, String message) {
+        return new Result<>(code, message, null);
+    }
+
+    /**
      * 失败响应（带响应码和数据）
      */
     public static <T> Result<T> error(ResultCode resultCode, T data) {

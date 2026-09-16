@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:galen_seckill}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USER:root}
-    password: ${MYSQL_PASSWORD:root123}
+    password: ${MYSQL_PASSWORD:1234}
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 20
@@ -32,18 +32,19 @@ spring:
         login-password: admin123
 
   # Redis配置
-  redis:
-    host: ${REDIS_HOST:redis}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
-    database: 0
-    timeout: 10000ms
-    lettuce:
-      pool:
-        max-active: 500
-        max-idle: 100
-        min-idle: 50
-        max-wait: -1
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 500
+          max-idle: 100
+          min-idle: 50
+          max-wait: -1
 
   # Session配置
   session:
