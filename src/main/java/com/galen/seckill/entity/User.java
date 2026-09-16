@@ -76,10 +76,4 @@ public class User implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
-
-    /**
-     * 是否删除（逻辑删除字段）
-     */
-    @TableLogic
-    private Integer deleted;
 }

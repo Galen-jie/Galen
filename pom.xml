@@ -63,6 +63,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Spring Security Crypto (仅用于密码加密) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+
         <!-- Spring Session + Redis -->
         <dependency>
             <groupId>org.springframework.session</groupId>
