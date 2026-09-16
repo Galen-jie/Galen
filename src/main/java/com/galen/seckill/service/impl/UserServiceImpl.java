@@ -1,5 +1,6 @@
 package com.galen.seckill.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.galen.seckill.common.ResultCode;
 import com.galen.seckill.dto.UserLoginDTO;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final String SESSION_PREFIX = "galen:session:";
+    private static final String TOKEN_PREFIX = "galen:token:";
     private static final long SESSION_EXPIRE_TIME = 30 * 60; // 30分钟
 
     @Autowired
@@ -75,14 +78,21 @@ public class UserServiceImpl implements UserService {
         user.setEmail(registerDTO.getEmail());
         user.setStatus(1);
         user.setGender(0);
-
+        Map<String, Object> map = BeanUtil.beanToMap(user);
+        Map<String, String> userMap = new HashMap<>();
+        for(Map.Entry<String, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            userMap.put(entry.getKey(), value==null?null: value.toString());
+        }
+        //生成一个token存储到redis中
+        String token = UUIDUtil.uuid();
+        stringRedisTemplate.opsForHash().putAll(TOKEN_PREFIX + token, userMap);
+        stringRedisTemplate.expire(TOKEN_PREFIX + token, SESSION_EXPIRE_TIME, TimeUnit.SECONDS);
         int result = userMapper.insert(user);
         if (result <= 0) {
             throw new BusinessException(ResultCode.INTERNAL_SERVER_ERROR, "注册失败");
         }
-
         log.info("用户注册成功: {}", user.getUsername());
-
         return convertToUserVO(user);
     }
 
@@ -112,12 +122,21 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(ResultCode.USER_DISABLED);
         }
 
+        // 将用户信息转换为Map<String, String>
+        Map<String, Object> map = BeanUtil.beanToMap(user);
+        Map<String, String> userMap = new HashMap<>();
+        for(Map.Entry<String, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            userMap.put(entry.getKey(), value==null?null: value.toString());
+        }
         // 生成session token
         String token = UUIDUtil.uuid();
-        String sessionKey = SESSION_PREFIX + token;
+        String sessionKey = TOKEN_PREFIX + token;
+
 
         // 存储用户信息到Redis
-        stringRedisTemplate.opsForValue().set(sessionKey, user.getId().toString(), SESSION_EXPIRE_TIME, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForHash().putAll(sessionKey, userMap);
+        stringRedisTemplate.expire(sessionKey, SESSION_EXPIRE_TIME, TimeUnit.SECONDS);
 
         log.info("用户登录成功: {}, token: {}", user.getUsername(), token);
 

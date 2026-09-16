@@ -1,6 +1,7 @@
 package com.galen.seckill.config;
 
 import com.galen.seckill.interceptor.LoginInterceptor;
+import com.galen.seckill.interceptor.RefreshInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,6 +19,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
+    @Autowired
+    private RefreshInterceptor refreshInterceptor;
 
     /**
      * 添加拦截器
@@ -25,11 +28,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
+                .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/api/user/login",
-                        "/api/user/register",
-                        "/api/user/logout",
+                        "/user/login",
+                        "/user/register",
+                        "/user/logout",
                         "/druid/**",
                         "/swagger-ui.html",
                         "/swagger-resources/**",
@@ -38,6 +42,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/actuator/**",
                         "/error"
                 );
+        registry.addInterceptor(refreshInterceptor)
+                .order(1)
+                .addPathPatterns("/**");
     }
 
     /**
