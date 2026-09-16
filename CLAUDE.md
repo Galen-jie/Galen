@@ -30,7 +30,7 @@ mvn clean package -DskipTests
 ## Architecture
 
 ### Module Structure
-- **User Module**: Registration, login (Session + Redis), user info management
+- **User Module**: Registration, login (Token + Redis + ThreadLocal), user info management
 - **Product Module**: Product display, inventory management
 - **Seckill Module**: Core seckill logic with multi-level rate limiting, hidden paths, CAPTCHA validation, Redis atomic stock reduction, RocketMQ async processing
 - **Order Module**: Order creation, payment simulation, timeout handling
@@ -44,7 +44,7 @@ mvn clean package -DskipTests
 ### Package Structure
 ```
 com.galen.seckill
-├── config/          # Spring configurations (Redis, Session, CORS, ThreadPool)
+├── config/          # Spring configurations (Redis, CORS, ThreadPool)
 ├── controller/      # REST API endpoints
 ├── service/         # Business logic
 ├── mapper/          # MyBatis Plus mappers
@@ -53,11 +53,11 @@ com.galen.seckill
 ├── vo/              # View Objects (output serialization)
 ├── common/          # Shared classes (Result, ResultCode, PageResult)
 ├── exception/       # Custom exceptions and global handler
-├── interceptor/     # Request interceptors (LoginInterceptor)
+├── interceptor/     # Request interceptors (LoginInterceptor, RefreshInterceptor)
 ├── annotation/      # Custom annotations (AccessLimit, RateLimit)
 ├── aspect/          # AOP aspects
 ├── mq/              # RocketMQ producers/consumers
-├── util/            # Utility classes
+├── util/            # Utility classes (UserHolder, CookieUtil, etc.)
 └── task/            # Scheduled tasks
 ```
 
@@ -79,8 +79,44 @@ mysql -u root -p < docs/sql/schema.sql
 
 ### Configuration
 - Environment-specific configs: `application-dev.yml` (local), `application-prod.yml` (production)
-- Redis stores Session data with namespace `galen:session`
+- Redis key namespace: `galen:token:{token}` for user session data
 - Druid monitoring available at `/druid` (admin/admin123)
+
+### Token + Redis + ThreadLocal Authentication
+
+**Overview**: Token-based stateless authentication using Redis for storage and ThreadLocal for request-scoped user context.
+
+**Components**:
+- **UserHolder**: ThreadLocal-based utility for storing/retrieving User objects within a request scope
+- **RefreshInterceptor** (order=1): Extracts token from request header, fetches user info from Redis Hash, stores in UserHolder, refreshes token expiration time. Intercepts **all paths**.
+- **LoginInterceptor** (order=2): Validates user presence in UserHolder, returns 401 if not logged in. Excludes `/user/login`, `/user/register`, `/user/logout`, etc.
+
+**Redis Storage Format**:
+```
+Key: galen:token:{token}
+Type: Hash
+Fields: id, username, phone, email, nickname, etc.
+TTL: 30 minutes (refreshed on each request)
+```
+
+**Authentication Flow**:
+1. Login: Generate UUID token, store user info as Hash in Redis, return token
+2. Request: RefreshInterceptor extracts token from `Authorization` or `token` header, fetches user from Redis, stores in ThreadLocal
+3. Controller: Access user via `UserHolder.getUser()` or `UserHolder.getUserId()`
+4. Logout: Delete Redis key for token
+5. Request End: LoginInterceptor cleans up ThreadLocal in `afterCompletion()`
+
+**Usage in Controllers**:
+```java
+@GetMapping("/info")
+public Result<UserVO> getUserInfo() {
+    User user = UserHolder.getUser();
+    if (user == null) {
+        return Result.error(401, "请先登录");
+    }
+    // Use user object
+}
+```
 
 ### API Response Format
 All APIs return `Result<T>` with structure:
@@ -108,7 +144,7 @@ Use `ResultCode` enum for standard response codes.
 ### Database Operations
 - MyBatis Plus provides base CRUD operations
 - Custom queries in `src/main/resources/mapper/*.xml`
-- Logical delete enabled (field: `deleted`)
+- No logical delete (physical delete only)
 
 ## Seckill Flow
 
