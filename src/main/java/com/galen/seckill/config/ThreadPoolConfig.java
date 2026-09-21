@@ -1,5 +1,6 @@
 package com.galen.seckill.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -16,8 +17,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Configuration
 @EnableAsync
+@RequiredArgsConstructor
 public class ThreadPoolConfig {
 
+    private final ThreadPoolProperties threadPoolProperties;
     /**
      * 异步任务线程池
      */
@@ -25,17 +28,17 @@ public class ThreadPoolConfig {
     public AsyncTaskExecutor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 核心线程数
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(threadPoolProperties.getCoreSize());
         // 最大线程数
-        executor.setMaxPoolSize(50);
+        executor.setMaxPoolSize(threadPoolProperties.getMaxPoolSize());
         // 队列容量
-        executor.setQueueCapacity(200);
+        executor.setQueueCapacity(threadPoolProperties.getQueueCapacity());
         // 线程名称前缀
         executor.setThreadNamePrefix("Async-Task-");
         // 拒绝策略：当任务队列满时，由调用线程处理该任务
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 线程存活时间
-        executor.setKeepAliveSeconds(60);
+        executor.setKeepAliveSeconds(threadPoolProperties.getKeepAliveTime());
         executor.initialize();
         return executor;
     }
@@ -46,12 +49,12 @@ public class ThreadPoolConfig {
     @Bean("seckillTaskExecutor")
     public AsyncTaskExecutor seckillTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(100);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(threadPoolProperties.getCoreSize());
+        executor.setMaxPoolSize(threadPoolProperties.getMaxPoolSize());
+        executor.setQueueCapacity(threadPoolProperties.getQueueCapacity());
         executor.setThreadNamePrefix("Seckill-Task-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setKeepAliveSeconds(60);
+        executor.setKeepAliveSeconds(threadPoolProperties.getKeepAliveTime());
         executor.initialize();
         return executor;
     }

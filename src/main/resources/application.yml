@@ -76,3 +76,8 @@ galen:
     order-timeout: 30
     # 最大重复购买次数
     max-buy-count: 1
+  threadpool:
+    core-size: 10
+    max-pool-size: 50
+    queue-capacity: 500
+    keep-alive-time: 60

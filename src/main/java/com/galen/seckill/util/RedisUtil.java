@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.galen.seckill.entity.SeckillGoods;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,9 @@ public class RedisUtil {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    @Qualifier("seckillTaskExecutor")
+    private AsyncTaskExecutor taskExecutor;
 
     /**
      * Redis Key前缀
@@ -33,7 +38,7 @@ public class RedisUtil {
     /**
      * 延迟双删的延迟时间（毫秒）
      */
-    private static final long DELETE_DELAY_MS = 500;
+    private static final long DELETE_DELAY_MS= 500;
 
     /**
      * 缓存过期时间（小时）
@@ -138,23 +143,32 @@ public class RedisUtil {
      * @param seckillId 秒杀ID
      */
     public void deleteSeckillGoodsCacheAsync(String seckillId) {
-        new Thread(() -> {
+        executeWithRetry(seckillId, 0);
+    }
+    private void executeWithRetry(String seckillId, int retryCount) {
+        taskExecutor.execute(()->{
             try {
-                // 第一次删除
                 deleteSeckillGoodsCache(seckillId);
 
-                // 延迟
-                Thread.sleep(DELETE_DELAY_MS);
+                Thread.sleep(DELETE_DELAY_MS+retryCount*100);
 
-                // 第二次删除
                 deleteSeckillGoodsCache(seckillId);
-
                 log.info("异步延迟双删完成，seckillId: {}", seckillId);
-            } catch (InterruptedException e) {
-                log.error("异步延迟双删失败，seckillId: {}", seckillId, e);
-                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.warn("第{}次重试失败，seckillId: {}", retryCount, seckillId, e);
+                if(retryCount <3){
+                    try {
+                        Thread.sleep(DELETE_DELAY_MS);
+                    } catch (Exception ex) {
+                        e.printStackTrace();
+                    }
+                    executeWithRetry(seckillId, retryCount + 1);
+                }else{
+                    log.error("已经重试三次，请检查相关问题，seckillId: {}", seckillId, e);
+                }
+
             }
-        }).start();
+        });
     }
 
     /**
