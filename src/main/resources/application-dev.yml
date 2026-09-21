@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/galen_seckill?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: root123
+    password: 1234
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 10
@@ -54,13 +54,16 @@ spring:
     timeout: 1800
 
   # RocketMQ配置
-  rocketmq:
-    name-server: localhost:9876
-    producer:
-      group: galen-producer-group
-      send-message-timeout: 3000
-      retry-times-when-send-failed: 2
-      retry-times-when-send-async-failed: 2
+  rabbitmq:
+    host: 192.168.100.130 # 你的虚拟机IP
+    port: 5672 # 端口
+    virtual-host: /galen # 虚拟主机
+    username: galen # 用户名
+    password: fglzsbjs520 # 密码
+    listener:
+      simple:
+        pre-fetch: 1
+        acknowledge-mode: auto
 
   # 缓存配置
   cache:

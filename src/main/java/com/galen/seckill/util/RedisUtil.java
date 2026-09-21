@@ -3,6 +3,7 @@ package com.galen.seckill.util;
 import cn.hutool.core.bean.BeanUtil;
 import com.galen.seckill.entity.SeckillGoods;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -190,5 +191,15 @@ public class RedisUtil {
      */
     private String getSeckillGoodsKey(String seckillId) {
         return SECKILL_GOODS_KEY_PREFIX + seckillId;
+    }
+
+    public void updateSeckillGoodsStatus(String seckillId,Integer status){
+        String key = getSeckillGoodsKey(seckillId);
+
+        try {
+            redisTemplate.opsForHash().put(key, "status", status);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }

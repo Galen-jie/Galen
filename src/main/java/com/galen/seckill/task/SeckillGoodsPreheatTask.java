@@ -1,6 +1,8 @@
 package com.galen.seckill.task;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.galen.seckill.constant.GoodsStatus;
 import com.galen.seckill.entity.SeckillGoods;
 import com.galen.seckill.mapper.SeckillGoodsMapper;
 import com.galen.seckill.util.RedisUtil;
@@ -145,5 +147,45 @@ public class SeckillGoodsPreheatTask {
         } catch (Exception e) {
             log.error("手动预热失败", e);
         }
+    }
+
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void updateStatus(){
+        try {
+            log.info("========== 更新秒杀商品状态 ==========");
+            QueryWrapper<SeckillGoods> queryWrapper = new QueryWrapper<SeckillGoods>();
+            queryWrapper.eq("status", 0)
+                    .le("start_time", LocalDateTime.now());
+            List<SeckillGoods> seckillGoodsList = seckillGoodsMapper.selectList(queryWrapper);
+            if(seckillGoodsList==null || seckillGoodsList.isEmpty()){
+                return;
+            } else{
+                for(SeckillGoods seckillGoods : seckillGoodsList){
+                    seckillGoods.setStatus(GoodsStatus.START);
+                    seckillGoodsMapper.updateById(seckillGoods);
+                    redisUtil.updateSeckillGoodsStatus(seckillGoods.getSeckillId(), seckillGoods.getStatus());
+                    log.info("更新秒杀商品状态 - seckillId: {}, status: {}", seckillGoods.getSeckillId(), seckillGoods.getStatus());
+                }
+            }
+
+            queryWrapper=new QueryWrapper<>();
+            queryWrapper.eq("status", 1)
+                    .le("end_time", LocalDateTime.now());
+            seckillGoodsList = seckillGoodsMapper.selectList(queryWrapper);
+            if(seckillGoodsList==null||seckillGoodsList.isEmpty()){
+                return;
+            }else{
+                for(SeckillGoods seckillGoods : seckillGoodsList){
+                    seckillGoods.setStatus(GoodsStatus.END);
+                    seckillGoodsMapper.updateById(seckillGoods);
+                    redisUtil.updateSeckillGoodsStatus(seckillGoods.getSeckillId(), seckillGoods.getStatus());
+                    log.info("更新秒杀商品状态 - seckillId: {}, status: {}", seckillGoods.getSeckillId(), seckillGoods.getStatus());
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("更新秒杀商品状态失败", e);
+        }
+
     }
 }
