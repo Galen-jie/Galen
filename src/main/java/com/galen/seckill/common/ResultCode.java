@@ -50,7 +50,28 @@ public enum ResultCode {
     ORDER_ALREADY_PAID(3002, "订单已支付"),
     ORDER_ALREADY_CANCELLED(3003, "订单已取消"),
     ORDER_TIMEOUT(3004, "订单已超时"),
-    ORDER_STATUS_ERROR(3005, "订单状态错误");
+    ORDER_STATUS_ERROR(3005, "订单状态错误"),
+
+    // 宠物救助相关错误 4xxx
+    PET_NOT_FOUND(4001, "宠物信息不存在"),
+    PET_ALREADY_ADOPTED(4002, "该宠物已被领养"),
+    PET_OFFLINE(4003, "该宠物已下架"),
+    PET_NO_PERMISSION(4004, "无权限操作该宠物信息"),
+    PET_IMAGE_LIMIT(4005, "图片数量超过限制"),
+
+    // 领养申请相关错误 5xxx
+    APPLICATION_NOT_FOUND(5001, "领养申请不存在"),
+    APPLICATION_ALREADY_EXISTS(5002, "已提交过领养申请"),
+    APPLICATION_ALREADY_PROCESSED(5003, "申请已处理，无法重复操作"),
+    APPLICATION_NO_PERMISSION(5004, "无权限审核该申请"),
+
+    // 评论点赞相关错误 6xxx
+    COMMENT_NOT_FOUND(6001, "评论不存在"),
+    COMMENT_ALREADY_LIKED(6002, "已点赞"),
+    COMMENT_NOT_LIKED(6003, "未点赞，无法取消"),
+    FILE_UPLOAD_FAILED(6004, "文件上传失败"),
+    FILE_TYPE_NOT_ALLOWED(6005, "文件类型不允许"),
+    FILE_SIZE_EXCEEDED(6006, "文件大小超过限制");
 
     /**
      * 响应码

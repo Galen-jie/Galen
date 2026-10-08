@@ -3,6 +3,7 @@ package com.galen.seckill.config;
 import com.galen.seckill.interceptor.LoginInterceptor;
 import com.galen.seckill.interceptor.RefreshInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,6 +22,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private LoginInterceptor loginInterceptor;
     @Autowired
     private RefreshInterceptor refreshInterceptor;
+
+    @Value("${galen.upload.local-path}")
+    private String uploadPath;
 
     /**
      * 添加拦截器
@@ -52,7 +56,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 静态资源
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
+
+        // 上传文件路径映射
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:" + uploadPath + "/");
     }
 }

@@ -10,7 +10,6 @@ import com.galen.seckill.entity.User;
 import com.galen.seckill.exception.BusinessException;
 import com.galen.seckill.mapper.UserMapper;
 import com.galen.seckill.service.UserService;
-import com.galen.seckill.util.MD5Util;
 import com.galen.seckill.util.UUIDUtil;
 import com.galen.seckill.util.ValidatorUtil;
 import com.galen.seckill.vo.UserVO;

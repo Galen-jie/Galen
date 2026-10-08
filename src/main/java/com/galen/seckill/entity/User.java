@@ -68,6 +68,21 @@ public class User implements Serializable {
     private Integer status;
 
     /**
+     * 角色：0-普通用户，1-救助站/志愿者
+     */
+    private Integer role;
+
+    /**
+     * 所属机构
+     */
+    private String organization;
+
+    /**
+     * 资质证书URL
+     */
+    private String certificate;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
