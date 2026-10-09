@@ -26,7 +26,6 @@ public class UserRole {
             return "普通用户";
         }
         return switch (role) {
-            case NORMAL -> "普通用户";
             case RESCUE_STATION -> "救助站/志愿者";
             default -> "普通用户";
         };

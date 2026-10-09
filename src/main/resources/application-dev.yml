@@ -83,3 +83,10 @@ redisson:
       idleConnectionTimeout: 10000
       connectTimeout: 10000
       timeout: 3000
+
+# 文件上传配置（开发环境使用本地存储）
+galen:
+  upload:
+    type: local
+    local-path: D:/upload/pet-rescue
+    url-prefix: http://localhost:8080/upload/

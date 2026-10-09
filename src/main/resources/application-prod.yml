@@ -81,6 +81,17 @@ redisson:
       connectTimeout: 10000
       timeout: 3000
 
+# 文件上传配置（生产环境使用OSS）
+galen:
+  upload:
+    type: oss
+    oss:
+      endpoint: oss-cn-beijing.aliyuncs.com
+      access-key-id: ${ALIYUN_ACCESS_KEY_ID}
+      access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET}
+      bucket-name: galen-petrescue
+      url-prefix: https://galen-petrescue.oss-cn-beijing.aliyuncs.com/
+
 # 日志配置
 logging:
   level:

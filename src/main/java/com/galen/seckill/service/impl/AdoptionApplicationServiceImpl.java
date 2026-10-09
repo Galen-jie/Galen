@@ -58,7 +58,7 @@ public class AdoptionApplicationServiceImpl implements AdoptionApplicationServic
         if (pet == null) {
             throw new BusinessException(ResultCode.PET_NOT_FOUND);
         }
-        if (!PetStatus.WAITING.equals(pet.getStatus())) {
+        if (pet.getStatus() == null || pet.getStatus() != PetStatus.WAITING) {
             throw new BusinessException(ResultCode.PET_ALREADY_ADOPTED);
         }
 
@@ -100,7 +100,7 @@ public class AdoptionApplicationServiceImpl implements AdoptionApplicationServic
         }
 
         // 检查申请状态
-        if (!ApplicationStatus.PENDING.equals(application.getStatus())) {
+        if (application.getStatus() == null || application.getStatus() != ApplicationStatus.PENDING) {
             throw new BusinessException(ResultCode.APPLICATION_ALREADY_PROCESSED);
         }
 
@@ -123,7 +123,7 @@ public class AdoptionApplicationServiceImpl implements AdoptionApplicationServic
         }
 
         // 检查申请状态
-        if (!ApplicationStatus.PENDING.equals(application.getStatus())) {
+        if (application.getStatus() == null || application.getStatus() != ApplicationStatus.PENDING) {
             throw new BusinessException(ResultCode.APPLICATION_ALREADY_PROCESSED);
         }
 
@@ -137,13 +137,13 @@ public class AdoptionApplicationServiceImpl implements AdoptionApplicationServic
         application.setStatus(reviewDTO.getStatus());
         application.setReviewerId(reviewer.getId());
         application.setReviewTime(LocalDateTime.now());
-        if (ApplicationStatus.REJECTED.equals(reviewDTO.getStatus())) {
+        if (reviewDTO.getStatus() != null && reviewDTO.getStatus() == ApplicationStatus.REJECTED) {
             application.setRejectReason(reviewDTO.getRejectReason());
         }
         adoptionApplicationMapper.updateById(application);
 
         // 如果通过，更新宠物状态为"已预约"
-        if (ApplicationStatus.APPROVED.equals(reviewDTO.getStatus())) {
+        if (reviewDTO.getStatus() != null && reviewDTO.getStatus() == ApplicationStatus.APPROVED) {
             pet.setStatus(PetStatus.RESERVED);
             petRescueMapper.updateById(pet);
         }

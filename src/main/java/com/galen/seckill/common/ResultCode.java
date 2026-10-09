@@ -71,7 +71,13 @@ public enum ResultCode {
     COMMENT_NOT_LIKED(6003, "未点赞，无法取消"),
     FILE_UPLOAD_FAILED(6004, "文件上传失败"),
     FILE_TYPE_NOT_ALLOWED(6005, "文件类型不允许"),
-    FILE_SIZE_EXCEEDED(6006, "文件大小超过限制");
+    FILE_SIZE_EXCEEDED(6006, "文件大小超过限制"),
+
+    // OSS存储相关错误 7xxx
+    OSS_INIT_FAILED(7001, "OSS初始化失败"),
+    OSS_UPLOAD_FAILED(7002, "OSS上传失败"),
+    OSS_DELETE_FAILED(7003, "OSS删除失败"),
+    OSS_CONFIG_ERROR(7004, "OSS配置错误");
 
     /**
      * 响应码
