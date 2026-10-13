@@ -3,7 +3,6 @@ package com.galen.seckill.vo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * 用户信息VO
@@ -52,7 +51,7 @@ public class UserVO implements Serializable {
     private Integer gender;
 
     /**
-     * 创建时间
+     * 角色：0-普通用户，1-救助站/志愿者
      */
-    private LocalDateTime createTime;
+    private Integer role;
 }

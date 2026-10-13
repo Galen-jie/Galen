@@ -4,7 +4,26 @@
       "Bash(mvn clean *)",
       "Bash(mvn compile *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl http://localhost:3000)",
+      "Bash(curl -s http://localhost:8080/user/info)",
+      "Bash(netstat -ano)",
+      "Bash(mvn exec:java -Dexec.mainClass=\"com.galen.seckill.util.PasswordGenerator\" -q)",
+      "Bash(curl *)",
+      "Bash(git checkout *)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(taskkill *)",
+      "Bash(mvn spring-boot:run -Dspring-boot.run.jvmArguments=\"-Dfile.encoding=UTF-8\")",
+      "Bash(redis-cli FLUSHALL)",
+      "Bash(awk '{print $5}')",
+      "Bash(xargs -I {} taskkill //F //PID {})",
+      "Bash(findstr :3000)",
+      "Bash(findstr :3001)",
+      "Bash(mysql *)",
+      "Bash(xargs grep -l \"addResourceHandlers\\\\|ResourceHandler\")",
+      "Bash(xargs grep -l \"image\\\\|Image\")"
     ]
   }
 }

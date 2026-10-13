@@ -3,6 +3,7 @@ package com.galen.seckill.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.galen.seckill.common.ResultCode;
+import com.galen.seckill.dto.PasswordUpdateDTO;
 import com.galen.seckill.dto.UserLoginDTO;
 import com.galen.seckill.dto.UserRegisterDTO;
 import com.galen.seckill.dto.UserUpdateDTO;
@@ -81,7 +82,12 @@ public class UserServiceImpl implements UserService {
         Map<String, String> userMap = new HashMap<>();
         for(Map.Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
-            userMap.put(entry.getKey(), value==null?null: value.toString());
+            String key = entry.getKey();
+            // 跳过敏感字段和复杂类型字段
+            if ("password".equals(key) || "createTime".equals(key) || "updateTime".equals(key)) {
+                continue;
+            }
+            userMap.put(key, value==null?null: value.toString());
         }
         //生成一个token存储到redis中
         String token = UUIDUtil.uuid();
@@ -126,7 +132,12 @@ public class UserServiceImpl implements UserService {
         Map<String, String> userMap = new HashMap<>();
         for(Map.Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
-            userMap.put(entry.getKey(), value==null?null: value.toString());
+            String key = entry.getKey();
+            // 跳过敏感字段和复杂类型字段
+            if ("password".equals(key) || "createTime".equals(key) || "updateTime".equals(key)) {
+                continue;
+            }
+            userMap.put(key, value==null?null: value.toString());
         }
         // 生成session token
         String token = UUIDUtil.uuid();
@@ -191,6 +202,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByUsername(String username) {
         return userMapper.selectByUsername(username);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updatePassword(Long userId, PasswordUpdateDTO passwordDTO) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "用户不存在");
+        }
+
+        // 验证旧密码
+        if (!passwordEncoder.matches(passwordDTO.getOldPassword(), user.getPassword())) {
+            throw new BusinessException(ResultCode.USER_PASSWORD_ERROR, "当前密码错误");
+        }
+
+        // 新密码不能与旧密码相同
+        if (passwordEncoder.matches(passwordDTO.getNewPassword(), user.getPassword())) {
+            throw new BusinessException(ResultCode.VALIDATE_FAILED, "新密码不能与当前密码相同");
+        }
+
+        // 更新密码
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
+        int result = userMapper.updateById(user);
+        if (result <= 0) {
+            throw new BusinessException(ResultCode.INTERNAL_SERVER_ERROR, "密码修改失败");
+        }
+
+        log.info("用户密码修改成功: {}", user.getUsername());
+        return true;
     }
 
     /**

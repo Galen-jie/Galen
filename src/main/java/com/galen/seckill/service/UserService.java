@@ -1,5 +1,6 @@
 package com.galen.seckill.service;
 
+import com.galen.seckill.dto.PasswordUpdateDTO;
 import com.galen.seckill.dto.UserLoginDTO;
 import com.galen.seckill.dto.UserRegisterDTO;
 import com.galen.seckill.dto.UserUpdateDTO;
@@ -46,6 +47,15 @@ public interface UserService {
      * @return 更新后的用户信息
      */
     UserVO updateUser(Long userId, UserUpdateDTO updateDTO);
+
+    /**
+     * 修改密码
+     *
+     * @param userId 用户ID
+     * @param passwordDTO 密码更新信息
+     * @return 是否成功
+     */
+    boolean updatePassword(Long userId, PasswordUpdateDTO passwordDTO);
 
     /**
      * 根据手机号查询用户

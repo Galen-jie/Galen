@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>检查Token</title>
+</head>
+<body>
+    <h1>LocalStorage 检查</h1>
+    <div id="info"></div>
+    <button onclick="clearToken()">清除Token</button>
+    <script>
+        const info = document.getElementById('info');
+        const token = localStorage.getItem('pet_token');
+        info.innerHTML = `
+            <p>Token: ${token ? '存在' : '不存在'}</p>
+            <p>Token值: ${token || '无'}</p>
+        `;
+        
+        function clearToken() {
+            localStorage.removeItem('pet_token');
+            alert('Token已清除，请刷新页面');
+            location.reload();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>调试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .info-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🔧 调试工具</h1>
+    
+    <div class="info-box">
+        <h3>当前状态</h3>
+        <p><strong>Token:</strong> <span id="token-status"></span></p>
+        <p><strong>Cart:</strong> <span id="cart-status"></span></p>
+    </div>
+
+    <div class="info-box">
+        <h3>操作</h3>
+        <button onclick="clearToken()">清除 Token</button>
+        <button onclick="clearCart()">清除购物车</button>
+        <button onclick="clearAll()">清除所有</button>
+    </div>
+
+    <div class="info-box">
+        <h3>提示</h3>
+        <p>1. 清除状态后，<a href="/">点击这里返回首页</a></p>
+        <p>2. 然后注册新账号并登录</p>
+        <p>3. 用户名: testuser, 密码: Test123456, 手机号: 13800138888</p>
+    </div>
+
+    <script>
+        function updateStatus() {
+            const token = localStorage.getItem('pet_token');
+            const cart = localStorage.getItem('cart');
+            
+            document.getElementById('token-status').textContent = token ? 
+                `存在 (${token.substring(0, 20)}...)` : 
+                '不存在';
+            document.getElementById('token-status').className = token ? 'success' : 'error';
+            
+            document.getElementById('cart-status').textContent = cart ? 
+                `存在 (${cart.length} 字符)` : 
+                '不存在';
+        }
+
+        function clearToken() {
+            localStorage.removeItem('pet_token');
+            updateStatus();
+            alert('Token 已清除！');
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            updateStatus();
+            alert('购物车已清除！');
+        }
+
+        function clearAll() {
+            localStorage.clear();
+            updateStatus();
+            alert('所有数据已清除！');
+        }
+
+        // 页面加载时更新状态
+        updateStatus();
+    </script>
+</body>
+</html>

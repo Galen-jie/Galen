@@ -25,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,10 @@ public class PetRescueServiceImpl implements PetRescueService {
     public PetRescueVO createPet(PetRescueDTO petDTO) {
         Long userId = UserHolder.getUser().getId();
 
+        // 添加日志
+        log.info("用户{}发布宠物，接收到的数据: petType={}, petName={}, imageUrls={}",
+                userId, petDTO.getPetType(), petDTO.getPetName(), petDTO.getImageUrls());
+
         // 转换DTO为Entity
         PetRescue pet = BeanUtil.copyProperties(petDTO, PetRescue.class);
         pet.setPublisherId(userId);
@@ -67,7 +72,9 @@ public class PetRescueServiceImpl implements PetRescueService {
 
         // 处理图片URL列表，转为JSON字符串
         if (petDTO.getImageUrls() != null && !petDTO.getImageUrls().isEmpty()) {
-            pet.setImages(JSONUtil.toJsonStr(petDTO.getImageUrls()));
+            String imagesJson = JSONUtil.toJsonStr(petDTO.getImageUrls());
+            pet.setImages(imagesJson);
+            log.info("图片URL列表转为JSON: {}", imagesJson);
         }
 
         // 保存到数据库
@@ -317,7 +324,15 @@ public class PetRescueServiceImpl implements PetRescueService {
 
         // 解析图片URL列表
         if (StringUtils.hasText(pet.getImages())) {
-            vo.setImageUrls(JSONUtil.toList(pet.getImages(), String.class));
+            try {
+                vo.setImageUrls(JSONUtil.toList(pet.getImages(), String.class));
+            } catch (Exception e) {
+                log.warn("解析图片URL列表失败: {}, images: {}", e.getMessage(), pet.getImages());
+                // 解析失败时返回空列表
+                vo.setImageUrls(new ArrayList<>());
+            }
+        } else {
+            vo.setImageUrls(new ArrayList<>());
         }
 
         // 查询发布者信息

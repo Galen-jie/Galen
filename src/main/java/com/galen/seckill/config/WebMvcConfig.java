@@ -44,11 +44,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/v2/api-docs",
                         "/webjars/**",
                         "/actuator/**",
-                        "/error"
+                        "/error",
+                        "/upload/**"  // 添加上传文件路径排除
                 );
         registry.addInterceptor(refreshInterceptor)
                 .order(1)
-                .addPathPatterns("/**");
+                .addPathPatterns("/**")
+                .excludePathPatterns("/upload/**");  // 添加上传文件路径排除
     }
 
     /**

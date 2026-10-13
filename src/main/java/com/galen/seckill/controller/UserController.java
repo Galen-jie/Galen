@@ -2,6 +2,7 @@ package com.galen.seckill.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.galen.seckill.common.Result;
+import com.galen.seckill.dto.PasswordUpdateDTO;
 import com.galen.seckill.dto.UserLoginDTO;
 import com.galen.seckill.dto.UserRegisterDTO;
 import com.galen.seckill.dto.UserUpdateDTO;
@@ -51,7 +52,7 @@ public class UserController {
                                  HttpServletResponse response) {
         String token = userService.login(loginDTO);
         CookieUtil.setCookie(response, "token", token, 1800);
-        return Result.success(token);
+        return Result.success("登录成功", token);
     }
 
     /**
@@ -82,6 +83,23 @@ public class UserController {
         }
         UserVO userVO = userService.updateUser(userId, updateDTO);
         return Result.success(userVO);
+    }
+
+    /**
+     * 修改密码
+     */
+    @PutMapping("/password")
+    public Result<Void> updatePassword(@Valid @RequestBody PasswordUpdateDTO passwordDTO) {
+        User user = UserHolder.getUser();
+        if (user == null) {
+            return Result.error(401, "请先登录");
+        }
+        Long userId = user.getId();
+        if (userId == null) {
+            return Result.error(401, "请先登录");
+        }
+        userService.updatePassword(userId, passwordDTO);
+        return Result.success(null);
     }
 
     /**

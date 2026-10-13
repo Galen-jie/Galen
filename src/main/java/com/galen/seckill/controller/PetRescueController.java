@@ -27,10 +27,9 @@ public class PetRescueController {
     private PetRescueService petRescueService;
 
     /**
-     * 发布宠物救助信息（需要救助站/志愿者权限）
+     * 发布宠物救助信息
      */
     @PostMapping
-    @RequireRole(UserRole.RESCUE_STATION)
     public Result<PetRescueVO> createPet(@Valid @RequestBody PetRescueDTO petDTO) {
         PetRescueVO vo = petRescueService.createPet(petDTO);
         return Result.success(vo);

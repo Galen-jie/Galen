@@ -79,6 +79,7 @@ public class OssStorageStrategy implements StorageStrategy {
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
             metadata.setCacheControl("max-age=31536000");
+            metadata.setContentDisposition("inline"); // 设置为内联显示，而不是下载
 
             ossClient.putObject(bucketName, objectKey, inputStream, metadata);
 

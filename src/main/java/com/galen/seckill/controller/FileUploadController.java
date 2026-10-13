@@ -30,7 +30,8 @@ public class FileUploadController {
     public Result<String> uploadFile(@RequestParam("file") MultipartFile file,
                                       @RequestParam(required = false) String businessType) {
         String url = fileUploadService.uploadFile(file, businessType);
-        return Result.success(url);
+        log.info("文件上传成功，返回URL: {}", url);
+        return Result.success("上传成功", url);
     }
 
     /**

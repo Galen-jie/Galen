@@ -278,6 +278,22 @@ public class AdoptionApplicationServiceImpl implements AdoptionApplicationServic
         PetRescue pet = petRescueMapper.selectById(application.getPetId());
         if (pet != null) {
             vo.setPetName(pet.getPetName());
+            // 设置宠物图片（取第一张）
+            String images = pet.getImages();
+            if (images != null && !images.isEmpty()) {
+                try {
+                    // images可能是JSON数组格式
+                    if (images.startsWith("[")) {
+                        // 简单解析JSON数组，取第一个元素
+                        String firstImage = images.replace("[", "").replace("]", "").replace("\"", "").split(",")[0].trim();
+                        vo.setPetImage(firstImage);
+                    } else {
+                        vo.setPetImage(images);
+                    }
+                } catch (Exception e) {
+                    log.warn("解析宠物图片失败: {}", e.getMessage());
+                }
+            }
         }
 
         // 查询审核人信息

@@ -2,7 +2,7 @@ spring:
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/galen_seckill?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/galen?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: 1234
     type: com.alibaba.druid.pool.DruidDataSource
@@ -74,7 +74,7 @@ spring:
 
 # Redisson配置
 redisson:
-  config: |
+  config:
     singleServerConfig:
       address: redis://localhost:6379
       database: 0
@@ -84,9 +84,13 @@ redisson:
       connectTimeout: 10000
       timeout: 3000
 
-# 文件上传配置（开发环境使用本地存储）
+# 文件上传配置（开发环境使用OSS）
 galen:
   upload:
-    type: local
-    local-path: D:/upload/pet-rescue
-    url-prefix: http://localhost:8080/upload/
+    type: oss  # 使用OSS存储
+    oss:
+      endpoint: oss-cn-beijing.aliyuncs.com
+      access-key-id: ${ALIYUN_ACCESS_KEY_ID:your-access-key-id}
+      access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your-access-key-secret}
+      bucket-name: galen-petrescue
+      url-prefix: https://galen-petrescue.oss-cn-beijing.aliyuncs.com/
