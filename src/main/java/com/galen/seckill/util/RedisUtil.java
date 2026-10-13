@@ -3,7 +3,6 @@ package com.galen.seckill.util;
 import cn.hutool.core.bean.BeanUtil;
 import com.galen.seckill.entity.SeckillGoods;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.AsyncTaskExecutor;

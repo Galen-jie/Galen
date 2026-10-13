@@ -2,7 +2,6 @@ package com.galen.seckill.util;
 
 
 import com.galen.seckill.entity.SeckillGoods;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -20,7 +19,7 @@ public class StockRedisUtil {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    private final static String STOCK_KEY = "galen:stock:";
+    private final static String STOCK_KEY_PREFIX = "galen:stock:";
 
     public static DefaultRedisScript<Long> DECREASE_STOCK_SCRIPT;
 
@@ -42,15 +41,15 @@ public class StockRedisUtil {
 
     public void preHeatStock(SeckillGoods seckillGoods) {
         try {
-            String key=getStockKey(seckillGoods.getGoodsId());
+            String key=getStockKey(seckillGoods.getSeckillId());
             redisTemplate.opsForValue().set(key, seckillGoods.getStockCount());
             log.info("预热库存成功，seckillId: {}", seckillGoods.getSeckillId());
         } catch (Exception e) {
             log.error("预热库存失败，seckillId: {}", seckillGoods.getSeckillId(), e);
         }
     }
-    public boolean decreaseStock(Long Id, Integer count) {
-        String key=getStockKey(Id);
+    public boolean decreaseStock(String seckillId, Integer count) {
+        String key=getStockKey(seckillId);
         try {
             Long res = redisTemplate.execute(
                     DECREASE_STOCK_SCRIPT,
@@ -62,24 +61,24 @@ public class StockRedisUtil {
             }
             return true;
         } catch (Exception e) {
-            log.error("库存不足，seckillId: {}, count: {}", Id, count, e);
+            log.error("库存不足，seckillId: {}, count: {}", seckillId, count, e);
             return false;
         }
     }
-    private String getStockKey(Long productId) {
-        return STOCK_KEY + productId;
+    private String getStockKey(String seckillId) {
+        return STOCK_KEY_PREFIX + seckillId;
     }
-    public void rollbackStock(Long id, Integer count){
+    public void rollbackStock(String seckillId, Integer count){
         try {
-            String key=getStockKey(id);
+            String key=getStockKey(seckillId);
             redisTemplate.execute(
                     INCREASE_STOCK_SCRIPT,
                     Collections.singletonList(key),
                     String.valueOf(count)
             );
-            log.info("库存回滚成功，seckillId: {}, count: {}", id, count);
+            log.info("库存回滚成功，seckillId: {}, count: {}", seckillId, count);
         } catch (Exception e) {
-            log.error("库存回滚失败，seckillId: {}, count: {}", id, count, e);
+            log.error("库存回滚失败，seckillId: {}, count: {}", seckillId, count, e);
         }
     }
 

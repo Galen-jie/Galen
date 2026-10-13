@@ -20,8 +20,17 @@ public class SeckillOrderController {
     private SeckillOrderService seckillOrderService;
 
     @PostMapping
-    public Result<SeckillOrderVO> createSeckillOrder(@Valid @RequestBody SeckillOrderDTO seckillOrderDTO) {
-        SeckillOrderVO vo = seckillOrderService.createSeckillOrder(seckillOrderDTO);
+    public Result<String> createSeckillOrder(@Valid @RequestBody SeckillOrderDTO seckillOrderDTO) {
+        String orderNo = seckillOrderService.createSeckillOrder(seckillOrderDTO);
+        return Result.success("秒杀请求已提交，请轮询查询结果", orderNo);
+    }
+
+    @GetMapping("/result/{orderNo}")
+    public Result<SeckillOrderVO> getSeckillResult(@PathVariable String orderNo) {
+        SeckillOrderVO vo = seckillOrderService.getSeckillResult(orderNo);
+        if (vo == null) {
+            return Result.success("订单处理中，请稍后重试", null);
+        }
         return Result.success(vo);
     }
 

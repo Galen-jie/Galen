@@ -23,7 +23,10 @@
       "Bash(findstr :3001)",
       "Bash(mysql *)",
       "Bash(xargs grep -l \"addResourceHandlers\\\\|ResourceHandler\")",
-      "Bash(xargs grep -l \"image\\\\|Image\")"
+      "Bash(xargs grep -l \"image\\\\|Image\")",
+      "Bash(mvn -q compile)",
+      "Bash(echo \"EXIT_CODE=$?\")",
+      "Read(//tmp/**)"
     ]
   }
 }

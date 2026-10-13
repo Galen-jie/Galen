@@ -6,6 +6,7 @@ import com.galen.seckill.constant.GoodsStatus;
 import com.galen.seckill.entity.SeckillGoods;
 import com.galen.seckill.mapper.SeckillGoodsMapper;
 import com.galen.seckill.util.RedisUtil;
+import com.galen.seckill.util.StockRedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,6 +33,9 @@ public class SeckillGoodsPreheatTask {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private StockRedisUtil stockRedisUtil;
 
     /**
      * 预热提前时间（分钟）
@@ -88,7 +92,7 @@ public class SeckillGoodsPreheatTask {
 
                     // 预热到Redis
                     redisUtil.preheatSeckillGoods(seckillGoods);
-
+                    stockRedisUtil.preHeatStock(seckillGoods);
                     // 计算距离开始的剩余时间
                     long minutesUntilStart = ChronoUnit.MINUTES.between(now, seckillGoods.getStartTime());
 
@@ -136,6 +140,7 @@ public class SeckillGoodsPreheatTask {
             for (SeckillGoods seckillGoods : seckillGoodsList) {
                 try {
                     redisUtil.preheatSeckillGoods(seckillGoods);
+                    stockRedisUtil.preHeatStock(seckillGoods);
                     log.info("预热成功 - seckillId: {}", seckillGoods.getSeckillId());
                 } catch (Exception e) {
                     log.error("预热失败 - seckillId: {}", seckillGoods.getSeckillId(), e);

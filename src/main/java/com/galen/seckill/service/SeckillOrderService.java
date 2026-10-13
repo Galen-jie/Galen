@@ -6,11 +6,13 @@ import com.galen.seckill.vo.SeckillOrderVO;
 
 public interface SeckillOrderService {
 
-    SeckillOrderVO createSeckillOrder(SeckillOrderDTO seckillOrderDTO);
+    String createSeckillOrder(SeckillOrderDTO seckillOrderDTO);
 
     SeckillOrderVO getOrderById(Long id);
 
     SeckillOrderVO getOrderByOrderNo(String orderNo);
+
+    SeckillOrderVO getSeckillResult(String orderNo);
 
     PageResult<SeckillOrderVO> getMyOrders(Long userId, int pageNum, int pageSize);
 

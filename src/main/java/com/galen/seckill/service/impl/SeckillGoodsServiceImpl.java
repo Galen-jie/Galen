@@ -12,6 +12,7 @@ import com.galen.seckill.mapper.GoodsMapper;
 import com.galen.seckill.mapper.SeckillGoodsMapper;
 import com.galen.seckill.service.SeckillGoodsService;
 import com.galen.seckill.util.RedisUtil;
+import com.galen.seckill.util.StockRedisUtil;
 import com.galen.seckill.vo.SeckillGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private StockRedisUtil stockRedisUtil;
 
     @Override
     public SeckillGoodsVO createSeckillGoods(SeckillGoodsDTO seckillGoodsDTO) {
@@ -62,6 +66,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
         // 预热到Redis
         redisUtil.preheatSeckillGoods(seckillGoods);
+        stockRedisUtil.preHeatStock(seckillGoods);
         log.info("创建秒杀商品成功，已预热到Redis。seckillId: {}", seckillGoods.getSeckillId());
 
         return convertToVO(seckillGoods);
