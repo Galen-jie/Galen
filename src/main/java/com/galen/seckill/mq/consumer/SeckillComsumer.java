@@ -54,13 +54,29 @@ public class SeckillComsumer {
             log.warn("秒杀已结束：" + orderNo);
             return;
         }
-        seckillGoodsMapper.decreaseStockWithVersion(Long.valueOf(message.getSeckillId()), 1, seckillGoods.getVersion());
+        int result = 0;
+        for(int i=0;i<3;i++){
+            result = seckillGoodsMapper.decreaseStockWithVersion(seckillGoods.getId(), 1, seckillGoods.getVersion());
+            if(result > 0){
+                break;
+            }
+            seckillGoods = seckillGoodsMapper.selectBySeckillId(message.getSeckillId());
+            if(seckillGoods.getStockCount() <= 0){
+                log.warn("库存不足：" + orderNo);
+                return;
+            }
+        }
+        if(result <= 0){
+            log.warn("抱歉，你并没抢到该商品：" + orderNo);
+            return;
+        }
+
         SeckillOrder new_Order = new SeckillOrder();
         new_Order.setOrderNo(orderNo);
         new_Order.setUserId(message.getUserId());
         new_Order.setSeckillId(message.getSeckillId());
-        new_Order.setGoodsId(message.getGoodsId());
-        new_Order.setOrderNo(orderNo);
+        new_Order.setGoodsId(seckillGoods.getGoodsId());
+        new_Order.setSeckillGoodsId(seckillGoods.getId());
         seckillOrderMapper.insert(new_Order);
     }
 }
