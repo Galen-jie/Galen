@@ -7,6 +7,8 @@ import com.galen.seckill.constant.UserRole;
 import com.galen.seckill.dto.PetRescueDTO;
 import com.galen.seckill.service.PetRescueService;
 import com.galen.seckill.vo.PetRescueVO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/pet")
+@Tag(name = "宠物救助", description = "宠物救助信息的发布、查询、点赞相关接口")
 public class PetRescueController {
 
     @Autowired
@@ -29,6 +32,7 @@ public class PetRescueController {
     /**
      * 发布宠物救助信息
      */
+    @Operation(summary = "发布宠物救助信息")
     @PostMapping
     public Result<PetRescueVO> createPet(@Valid @RequestBody PetRescueDTO petDTO) {
         PetRescueVO vo = petRescueService.createPet(petDTO);
@@ -38,6 +42,7 @@ public class PetRescueController {
     /**
      * 更新宠物信息（需要发布者权限）
      */
+    @Operation(summary = "更新宠物信息")
     @PutMapping("/{id}")
     public Result<PetRescueVO> updatePet(@PathVariable Long id,
                                           @Valid @RequestBody PetRescueDTO petDTO) {
@@ -48,6 +53,7 @@ public class PetRescueController {
     /**
      * 删除宠物信息（需要发布者权限）
      */
+    @Operation(summary = "删除宠物信息")
     @DeleteMapping("/{id}")
     public Result<Void> deletePet(@PathVariable Long id) {
         petRescueService.deletePet(id);
@@ -57,6 +63,7 @@ public class PetRescueController {
     /**
      * 获取宠物详情
      */
+    @Operation(summary = "获取宠物详情")
     @GetMapping("/{id}")
     public Result<PetRescueVO> getPetById(@PathVariable Long id) {
         PetRescueVO vo = petRescueService.getPetById(id);
@@ -66,6 +73,7 @@ public class PetRescueController {
     /**
      * 分页查询宠物列表
      */
+    @Operation(summary = "分页查询宠物列表")
     @GetMapping("/list")
     public Result<PageResult<PetRescueVO>> getPetList(
             @RequestParam(defaultValue = "1") int pageNum,
@@ -80,6 +88,7 @@ public class PetRescueController {
     /**
      * 下架宠物信息（需要发布者权限）
      */
+    @Operation(summary = "下架宠物信息")
     @PutMapping("/{id}/offline")
     public Result<Void> offlinePet(@PathVariable Long id) {
         petRescueService.offlinePet(id);
@@ -89,6 +98,7 @@ public class PetRescueController {
     /**
      * 获取我发布的宠物列表
      */
+    @Operation(summary = "获取我发布的宠物列表")
     @GetMapping("/my")
     public Result<PageResult<PetRescueVO>> getMyPetList(
             @RequestParam(defaultValue = "1") int pageNum,
@@ -100,6 +110,7 @@ public class PetRescueController {
     /**
      * 点赞宠物
      */
+    @Operation(summary = "点赞宠物")
     @PostMapping("/{id}/like")
     public Result<Void> likePet(@PathVariable Long id) {
         petRescueService.likePet(id);
@@ -109,6 +120,7 @@ public class PetRescueController {
     /**
      * 取消点赞
      */
+    @Operation(summary = "取消点赞")
     @DeleteMapping("/{id}/like")
     public Result<Void> unlikePet(@PathVariable Long id) {
         petRescueService.unlikePet(id);

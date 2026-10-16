@@ -26,7 +26,8 @@
       "Bash(xargs grep -l \"image\\\\|Image\")",
       "Bash(mvn -q compile)",
       "Bash(echo \"EXIT_CODE=$?\")",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(mvn -q -DskipTests compile)"
     ]
   }
 }

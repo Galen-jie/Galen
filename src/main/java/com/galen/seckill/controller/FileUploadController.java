@@ -2,6 +2,8 @@ package com.galen.seckill.controller;
 
 import com.galen.seckill.common.Result;
 import com.galen.seckill.service.FileUploadService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/file")
+@Tag(name = "文件上传", description = "文件上传、删除相关接口")
 public class FileUploadController {
 
     @Autowired
@@ -26,6 +29,7 @@ public class FileUploadController {
     /**
      * 上传单个文件
      */
+    @Operation(summary = "上传单个文件")
     @PostMapping("/upload")
     public Result<String> uploadFile(@RequestParam("file") MultipartFile file,
                                       @RequestParam(required = false) String businessType) {
@@ -37,6 +41,7 @@ public class FileUploadController {
     /**
      * 批量上传文件
      */
+    @Operation(summary = "批量上传文件")
     @PostMapping("/upload/batch")
     public Result<List<String>> uploadFiles(@RequestParam("files") MultipartFile[] files,
                                              @RequestParam(required = false) String businessType) {
@@ -47,6 +52,7 @@ public class FileUploadController {
     /**
      * 删除文件
      */
+    @Operation(summary = "删除文件")
     @DeleteMapping
     public Result<Void> deleteFile(@RequestParam String fileUrl) {
         fileUploadService.deleteFile(fileUrl);

@@ -11,6 +11,8 @@ import com.galen.seckill.service.UserService;
 import com.galen.seckill.util.CookieUtil;
 import com.galen.seckill.util.UserHolder;
 import com.galen.seckill.vo.UserVO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@Tag(name = "用户管理", description = "用户注册、登录、信息管理相关接口")
 public class UserController {
 
     @Autowired
@@ -38,6 +41,7 @@ public class UserController {
     /**
      * 用户注册
      */
+    @Operation(summary = "用户注册")
     @PostMapping("/register")
     public Result<UserVO> register(@Valid @RequestBody UserRegisterDTO registerDTO) {
         UserVO userVO = userService.register(registerDTO);
@@ -47,6 +51,7 @@ public class UserController {
     /**
      * 用户登录
      */
+    @Operation(summary = "用户登录")
     @PostMapping("/login")
     public Result<String> login(@Valid @RequestBody UserLoginDTO loginDTO,
                                  HttpServletResponse response) {
@@ -58,6 +63,7 @@ public class UserController {
     /**
      * 获取用户信息
      */
+    @Operation(summary = "获取当前登录用户信息")
     @GetMapping("/info")
     public Result<UserVO> getUserInfo() {
         User user = UserHolder.getUser();
@@ -71,6 +77,7 @@ public class UserController {
     /**
      * 更新用户信息
      */
+    @Operation(summary = "更新用户信息")
     @PutMapping("/update")
     public Result<UserVO> updateUser(@Valid @RequestBody UserUpdateDTO updateDTO) {
         User user = UserHolder.getUser();
@@ -88,6 +95,7 @@ public class UserController {
     /**
      * 修改密码
      */
+    @Operation(summary = "修改密码")
     @PutMapping("/password")
     public Result<Void> updatePassword(@Valid @RequestBody PasswordUpdateDTO passwordDTO) {
         User user = UserHolder.getUser();
@@ -105,6 +113,7 @@ public class UserController {
     /**
      * 用户登出
      */
+    @Operation(summary = "用户登出")
     @PostMapping("/logout")
     public Result<Void> logout(HttpServletRequest request) {
         String token = request.getHeader("token");

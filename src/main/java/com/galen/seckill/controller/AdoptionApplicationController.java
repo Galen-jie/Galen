@@ -6,6 +6,8 @@ import com.galen.seckill.dto.AdoptionApplicationDTO;
 import com.galen.seckill.dto.ApplicationReviewDTO;
 import com.galen.seckill.service.AdoptionApplicationService;
 import com.galen.seckill.vo.AdoptionApplicationVO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/adoption")
+@Tag(name = "领养申请", description = "宠物领养申请的提交、审核、查询相关接口")
 public class AdoptionApplicationController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class AdoptionApplicationController {
     /**
      * 提交领养申请（普通用户）
      */
+    @Operation(summary = "提交领养申请")
     @PostMapping
     public Result<AdoptionApplicationVO> createApplication(@Valid @RequestBody AdoptionApplicationDTO applicationDTO) {
         AdoptionApplicationVO vo = adoptionApplicationService.createApplication(applicationDTO);
@@ -37,6 +41,7 @@ public class AdoptionApplicationController {
     /**
      * 取消领养申请（申请人）
      */
+    @Operation(summary = "取消领养申请")
     @PutMapping("/{id}/cancel")
     public Result<Void> cancelApplication(@PathVariable Long id) {
         adoptionApplicationService.cancelApplication(id);
@@ -46,6 +51,7 @@ public class AdoptionApplicationController {
     /**
      * 审核领养申请（救助站/志愿者）
      */
+    @Operation(summary = "审核领养申请")
     @PutMapping("/review")
     public Result<Void> reviewApplication(@Valid @RequestBody ApplicationReviewDTO reviewDTO) {
         adoptionApplicationService.reviewApplication(reviewDTO);
@@ -55,6 +61,7 @@ public class AdoptionApplicationController {
     /**
      * 获取申请详情
      */
+    @Operation(summary = "获取申请详情")
     @GetMapping("/{id}")
     public Result<AdoptionApplicationVO> getApplicationById(@PathVariable Long id) {
         AdoptionApplicationVO vo = adoptionApplicationService.getApplicationById(id);
@@ -64,6 +71,7 @@ public class AdoptionApplicationController {
     /**
      * 获取我提交的申请列表（普通用户）
      */
+    @Operation(summary = "获取我提交的申请列表")
     @GetMapping("/my")
     public Result<PageResult<AdoptionApplicationVO>> getMyApplications(
             @RequestParam(defaultValue = "1") int pageNum,
@@ -75,6 +83,7 @@ public class AdoptionApplicationController {
     /**
      * 获取待审核的申请列表（救助站/志愿者）
      */
+    @Operation(summary = "获取待审核的申请列表")
     @GetMapping("/pending")
     public Result<PageResult<AdoptionApplicationVO>> getPendingApplications(
             @RequestParam(defaultValue = "1") int pageNum,
@@ -86,6 +95,7 @@ public class AdoptionApplicationController {
     /**
      * 获取某宠物的申请列表（发布者）
      */
+    @Operation(summary = "获取某宠物的申请列表")
     @GetMapping("/pet/{petId}")
     public Result<PageResult<AdoptionApplicationVO>> getApplicationsByPet(
             @PathVariable Long petId,

@@ -5,6 +5,8 @@ import com.galen.seckill.common.Result;
 import com.galen.seckill.dto.PetCommentDTO;
 import com.galen.seckill.service.PetCommentService;
 import com.galen.seckill.vo.PetCommentVO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/pet/comment")
+@Tag(name = "宠物评论", description = "宠物评论的发表、删除、点赞相关接口")
 public class PetCommentController {
 
     @Autowired
@@ -27,6 +30,7 @@ public class PetCommentController {
     /**
      * 发表评论
      */
+    @Operation(summary = "发表评论")
     @PostMapping
     public Result<PetCommentVO> createComment(@Valid @RequestBody PetCommentDTO commentDTO) {
         PetCommentVO vo = petCommentService.createComment(commentDTO);
@@ -36,6 +40,7 @@ public class PetCommentController {
     /**
      * 删除评论
      */
+    @Operation(summary = "删除评论")
     @DeleteMapping("/{id}")
     public Result<Void> deleteComment(@PathVariable Long id) {
         petCommentService.deleteComment(id);
@@ -45,6 +50,7 @@ public class PetCommentController {
     /**
      * 获取评论列表
      */
+    @Operation(summary = "获取评论列表")
     @GetMapping("/list/{petId}")
     public Result<PageResult<PetCommentVO>> getCommentList(
             @PathVariable Long petId,
@@ -57,6 +63,7 @@ public class PetCommentController {
     /**
      * 点赞评论
      */
+    @Operation(summary = "点赞评论")
     @PostMapping("/{id}/like")
     public Result<Void> likeComment(@PathVariable Long id) {
         petCommentService.likeComment(id);
@@ -66,6 +73,7 @@ public class PetCommentController {
     /**
      * 取消点赞评论
      */
+    @Operation(summary = "取消点赞评论")
     @DeleteMapping("/{id}/like")
     public Result<Void> unlikeComment(@PathVariable Long id) {
         petCommentService.unlikeComment(id);

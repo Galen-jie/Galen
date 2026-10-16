@@ -42,7 +42,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/swagger-ui.html",
                         "/swagger-resources/**",
                         "/v2/api-docs",
+                        "/v3/api-docs/**",
+                        "/doc.html",
                         "/webjars/**",
+                        "/favicon.ico",
                         "/actuator/**",
                         "/error",
                         "/upload/**"  // 添加上传文件路径排除
