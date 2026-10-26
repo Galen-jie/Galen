@@ -1,4 +1,10 @@
 spring:
+  ai:
+    openai:
+      api-key: sk-dc65736e3a5d4fa090d1b5aa4211e4a0
+      base_url: https://api.deepseek.com
+      chat:
+        model: deepseek-v4-pro
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
