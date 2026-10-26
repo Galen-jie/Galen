@@ -124,7 +124,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     @Override
     public SeckillGoodsVO getSeckillGoodsById(Long id) {
-        // 先从Redis查询
+        // 先从DB查询秒杀id
         SeckillGoods seckillGoods = seckillGoodsMapper.selectById(id);
         if (seckillGoods == null) {
             throw new BusinessException("秒杀商品不存在");

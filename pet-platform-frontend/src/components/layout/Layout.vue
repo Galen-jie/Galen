@@ -1,24 +1,30 @@
 <template>
-  <el-container class="layout-container">
-    <el-header class="layout-header">
+  <div class="layout-root">
+    <header class="layout-header">
       <Header />
-    </el-header>
-    <el-main class="layout-main">
-      <router-view />
-    </el-main>
-    <el-footer class="layout-footer">
-      <Footer />
-    </el-footer>
-  </el-container>
+    </header>
+    <div class="layout-body">
+      <div class="layout-content">
+        <main class="layout-main">
+          <router-view />
+        </main>
+        <footer class="layout-footer">
+          <Footer />
+        </footer>
+      </div>
+      <AssistantFloatBall />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import Header from './Header.vue'
 import Footer from './Footer.vue'
+import AssistantFloatBall from '@/components/assistant/AssistantFloatBall.vue'
 </script>
 
 <style scoped>
-.layout-container {
+.layout-root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -26,7 +32,6 @@ import Footer from './Footer.vue'
 }
 
 .layout-header {
-  padding: 0;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -35,18 +40,29 @@ import Footer from './Footer.vue'
   width: 100%;
 }
 
+.layout-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.layout-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .layout-main {
   flex: 1;
   padding: 20px;
-  background: #f5f5f5;
+  background: #fff;
   width: 100%;
 }
 
 .layout-footer {
-  padding: 0;
   background: #333;
   color: #fff;
-  height: auto !important;
   width: 100%;
 }
 </style>

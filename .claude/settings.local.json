@@ -27,7 +27,9 @@
       "Bash(mvn -q compile)",
       "Bash(echo \"EXIT_CODE=$?\")",
       "Read(//tmp/**)",
-      "Bash(mvn -q -DskipTests compile)"
+      "Bash(mvn -q -DskipTests compile)",
+      "Bash(tasklist *)",
+      "Bash(xargs sed -i 's/1200px/var\\(--content-max-width\\)/g')"
     ]
   }
 }

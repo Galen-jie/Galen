@@ -299,7 +299,7 @@ onMounted(() => {
 
 <style scoped>
 .home {
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 20px;
 }

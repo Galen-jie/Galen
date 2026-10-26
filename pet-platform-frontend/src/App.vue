@@ -13,7 +13,7 @@
 }
 
 html, body {
-  background: #f5f5f5 !important;
+  background: #fff !important;
 }
 
 body {
@@ -24,6 +24,6 @@ body {
 
 #app {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #fff;
 }
 </style>

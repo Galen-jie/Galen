@@ -1,9 +1,7 @@
 package com.galen.seckill.controller;
 
-import com.galen.seckill.annotation.RequireRole;
 import com.galen.seckill.common.PageResult;
 import com.galen.seckill.common.Result;
-import com.galen.seckill.constant.UserRole;
 import com.galen.seckill.dto.PetRescueDTO;
 import com.galen.seckill.service.PetRescueService;
 import com.galen.seckill.vo.PetRescueVO;
