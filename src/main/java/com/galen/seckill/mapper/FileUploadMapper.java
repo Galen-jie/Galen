@@ -10,6 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @author Galen
  * @since 2026-10-08
  */
-@Mapper
 public interface FileUploadMapper extends BaseMapper<FileUpload> {
 }

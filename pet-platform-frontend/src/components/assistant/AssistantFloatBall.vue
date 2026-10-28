@@ -1,5 +1,14 @@
 <template>
-  <button class="float-ball" :class="{ open }" @click="toggleOpen">
+  <button
+    ref="ballEl"
+    class="float-ball"
+    :class="{ open }"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove"
+    @pointerup="onPointerUp"
+    @pointercancel="onPointerUp"
+    @click="onBallClick"
+  >
     <el-icon v-if="!open"><ChatDotRound /></el-icon>
     <el-icon v-else><Close /></el-icon>
   </button>
@@ -70,7 +79,16 @@
                 class="message-row"
                 :class="msg.role === 'user' ? 'user' : 'assistant'"
               >
-                <div class="message-bubble">{{ msg.content }}</div>
+                <template v-if="msg.role === 'assistant'">
+                  <div class="message-avatar assistant-avatar">🐾</div>
+                  <div class="message-bubble">{{ msg.content }}</div>
+                </template>
+                <template v-else>
+                  <div class="message-bubble">{{ msg.content }}</div>
+                  <el-avatar class="message-avatar" :size="34" :src="userStore.userInfo?.avatar">
+                    {{ userStore.userInfo?.nickname?.charAt(0) || userStore.userInfo?.username?.charAt(0) || '我' }}
+                  </el-avatar>
+                </template>
               </div>
             </div>
           </div>
@@ -94,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, ArrowLeft, ChatDotRound, Close } from '@element-plus/icons-vue'
@@ -111,6 +129,84 @@ const currentConversation = ref(null)
 const inputText = ref('')
 const sending = ref(false)
 const messageArea = ref(null)
+
+// 悬浮球拖拽定位（直接操作 DOM，避免拖动时触发 Vue 重渲染导致延迟）
+const ballEl = ref(null)
+
+const BALL_SIZE = 56
+const BALL_MARGIN = 24
+
+let dragging = false
+let moved = false
+let dragStart = { x: 0, y: 0, left: 0, top: 0 }
+
+const clamp = (v, min, max) => Math.min(Math.max(v, min), max)
+
+const setBallPosition = (left, top) => {
+  const el = ballEl.value
+  if (!el) return
+  el.style.left = `${left}px`
+  el.style.top = `${top}px`
+}
+
+const getBallLeft = () => (ballEl.value ? parseFloat(ballEl.value.style.left) || 0 : 0)
+const getBallTop = () => (ballEl.value ? parseFloat(ballEl.value.style.top) || 0 : 0)
+
+const resetBallPosition = () => {
+  setBallPosition(window.innerWidth - BALL_SIZE - BALL_MARGIN, window.innerHeight - BALL_SIZE - 80)
+}
+
+const onPointerDown = (e) => {
+  dragging = true
+  moved = false
+  dragStart = { x: e.clientX, y: e.clientY, left: getBallLeft(), top: getBallTop() }
+  if (ballEl.value) ballEl.value.style.cursor = 'grabbing'
+  e.currentTarget.setPointerCapture?.(e.pointerId)
+}
+
+const onPointerMove = (e) => {
+  if (!dragging) return
+  const dx = e.clientX - dragStart.x
+  const dy = e.clientY - dragStart.y
+  if (Math.abs(dx) + Math.abs(dy) > 3) moved = true
+  setBallPosition(
+    clamp(dragStart.left + dx, 0, window.innerWidth - BALL_SIZE),
+    clamp(dragStart.top + dy, 0, window.innerHeight - BALL_SIZE)
+  )
+}
+
+const onPointerUp = () => {
+  if (!dragging) return
+  dragging = false
+  if (ballEl.value) ballEl.value.style.cursor = 'grab'
+  const left = getBallLeft()
+  const top = getBallTop()
+  const snappedLeft = left + BALL_SIZE / 2 < window.innerWidth / 2
+    ? BALL_MARGIN
+    : window.innerWidth - BALL_SIZE - BALL_MARGIN
+  setBallPosition(snappedLeft, clamp(top, BALL_MARGIN, window.innerHeight - BALL_SIZE - BALL_MARGIN))
+}
+
+const onBallClick = () => {
+  if (moved) return
+  toggleOpen()
+}
+
+const onWindowResize = () => {
+  setBallPosition(
+    clamp(getBallLeft(), 0, window.innerWidth - BALL_SIZE),
+    clamp(getBallTop(), 0, window.innerHeight - BALL_SIZE)
+  )
+}
+
+onMounted(() => {
+  resetBallPosition()
+  window.addEventListener('resize', onWindowResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', onWindowResize)
+})
 
 const messages = computed(() => currentConversation.value?.messages || [])
 
@@ -273,8 +369,6 @@ onMounted(() => {
 <style scoped>
 .float-ball {
   position: fixed;
-  right: 24px;
-  bottom: 80px;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -285,10 +379,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: grab;
   z-index: 2000;
   box-shadow: 0 4px 16px rgba(64, 158, 255, 0.4);
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  user-select: none;
+  touch-action: none;
 }
 
 .float-ball:hover {
@@ -306,7 +402,7 @@ onMounted(() => {
   align-self: flex-start;
   position: sticky;
   top: 60px;
-  height: min(600px, calc(100vh - 160px));
+  height: min(900px, calc(100vh - 60px));
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -468,6 +564,8 @@ onMounted(() => {
 
 .message-row {
   display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .message-row.user {
@@ -478,8 +576,23 @@ onMounted(() => {
   justify-content: flex-start;
 }
 
+.message-avatar {
+  flex-shrink: 0;
+}
+
+.assistant-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe3cd, #ffc9a3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
 .message-bubble {
-  max-width: 80%;
+  max-width: calc(100% - 48px);
   padding: 10px 14px;
   border-radius: 10px;
   font-size: 14px;

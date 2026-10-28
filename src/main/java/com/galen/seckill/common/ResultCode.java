@@ -77,7 +77,10 @@ public enum ResultCode {
     OSS_INIT_FAILED(7001, "OSS初始化失败"),
     OSS_UPLOAD_FAILED(7002, "OSS上传失败"),
     OSS_DELETE_FAILED(7003, "OSS删除失败"),
-    OSS_CONFIG_ERROR(7004, "OSS配置错误");
+    OSS_CONFIG_ERROR(7004, "OSS配置错误"),
+
+    // 智能助手相关错误 8xxx
+    CONVERSATION_NOT_FOUND(8001, "会话不存在");
 
     /**
      * 响应码

@@ -40,6 +40,9 @@ mybatis-plus:
 
 # 日志配置
 logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
   level:
     com.galen.seckill: debug
     org.springframework: info
