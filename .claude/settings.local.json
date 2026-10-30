@@ -47,7 +47,9 @@
       "Bash(tee /tmp/boot3.log)",
       "Bash(mvn dependency:tree -Dincludes=org.springframework.data:spring-data-redis,org.springframework.session:spring-session-data-redis,org.springframework.session:spring-session-core)",
       "Bash(mvn dependency:tree -Dincludes=org.redisson)",
-      "Bash(tee /tmp/boot4.log)"
+      "Bash(tee /tmp/boot4.log)",
+      "Bash(mvn -q -o compile)",
+      "Bash(unzip -l \"/d/develop/apache-maven-3.9.9-bin/apache-maven-3.9.9/mvn_repo/org/springframework/ai/spring-ai-model/1.1.7/spring-ai-model-1.1.7.jar\")"
     ]
   }
 }
