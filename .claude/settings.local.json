@@ -49,7 +49,9 @@
       "Bash(mvn dependency:tree -Dincludes=org.redisson)",
       "Bash(tee /tmp/boot4.log)",
       "Bash(mvn -q -o compile)",
-      "Bash(unzip -l \"/d/develop/apache-maven-3.9.9-bin/apache-maven-3.9.9/mvn_repo/org/springframework/ai/spring-ai-model/1.1.7/spring-ai-model-1.1.7.jar\")"
+      "Bash(unzip -l \"/d/develop/apache-maven-3.9.9-bin/apache-maven-3.9.9/mvn_repo/org/springframework/ai/spring-ai-model/1.1.7/spring-ai-model-1.1.7.jar\")",
+      "WebFetch(domain:developer.aliyun.com)",
+      "WebFetch(domain:blog.csdn.net)"
     ]
   }
 }

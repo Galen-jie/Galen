@@ -31,6 +31,8 @@ public class Goods {
 
     private Integer stock;
 
+    private Integer sales;
+
     private Long categoryId;
 
     private Integer status;

@@ -88,9 +88,15 @@
           <el-icon><Avatar /></el-icon>
           等待领养
         </h2>
-        <el-button text type="primary" @click="$router.push('/pet')">
-          查看更多 <el-icon><ArrowRight /></el-icon>
-        </el-button>
+        <div class="section-actions">
+          <el-button text @click="shufflePets">
+            <el-icon><Refresh /></el-icon>
+            换一换
+          </el-button>
+          <el-button text type="primary" @click="$router.push('/pet')">
+            查看更多 <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
       </div>
       <div class="pet-list">
         <el-row :gutter="20">
@@ -131,9 +137,15 @@
           <el-icon><ShoppingBag /></el-icon>
           热门商品
         </h2>
-        <el-button text type="primary" @click="$router.push('/goods')">
-          查看更多 <el-icon><ArrowRight /></el-icon>
-        </el-button>
+        <div class="section-actions">
+          <el-button text @click="shuffleGoods">
+            <el-icon><Refresh /></el-icon>
+            换一换
+          </el-button>
+          <el-button text type="primary" @click="$router.push('/goods')">
+            查看更多 <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
       </div>
       <div class="goods-list">
         <el-row :gutter="20">
@@ -165,9 +177,9 @@
 import { ref, onMounted, markRaw, computed } from 'vue'
 import { getPetList } from '@/api/pet'
 import { getGoodsList } from '@/api/goods'
-import { getActiveSeckillGoods } from '@/api/seckill'
+import { getSeckillGoodsList } from '@/api/seckill'
 import { getImageUrlWithDefault, DEFAULT_IMAGE } from '@/utils/image'
-import { Lightning, ArrowRight, Avatar, ShoppingBag, Location, Picture } from '@element-plus/icons-vue'
+import { Lightning, ArrowRight, Avatar, ShoppingBag, Location, Picture, Refresh } from '@element-plus/icons-vue'
 import CountdownTimer from '@/components/common/CountdownTimer.vue'
 
 const banners = ref([
@@ -204,10 +216,14 @@ const stats = ref([
   { label: '爱心商品', value: '300+', icon: markRaw(ShoppingBag), color: '#43e97b' }
 ])
 
+const allPets = ref([])
 const pets = ref([])
+const allGoods = ref([])
 const goodsList = ref([])
 const seckillGoods = ref([])
 const loading = ref(false)
+
+const HOME_DISPLAY_COUNT = 4
 
 const progressColor = '#f5576c'
 
@@ -265,19 +281,42 @@ const getSoldPercentage = (item) => {
   return Math.round((sold / item.stockCount) * 100)
 }
 
+// 从数组中随机抽取 n 条（不重复）
+const pickRandom = (arr, n) => {
+  if (!arr || arr.length === 0) return []
+  const shuffled = [...arr]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled.slice(0, Math.min(n, shuffled.length))
+}
+
+// 换一换：随机展示部分宠物
+const shufflePets = () => {
+  pets.value = pickRandom(allPets.value, HOME_DISPLAY_COUNT)
+}
+
+// 换一换：随机展示部分商品
+const shuffleGoods = () => {
+  goodsList.value = pickRandom(allGoods.value, HOME_DISPLAY_COUNT)
+}
+
 const fetchData = async () => {
   loading.value = true
   try {
-    // 获取宠物列表
-    const petRes = await getPetList({ pageNum: 1, pageSize: 4 })
+    // 获取宠物列表（拉取更多，前端随机展示部分）
+    const petRes = await getPetList({ pageNum: 1, pageSize: 20 })
     if (petRes.data?.records) {
-      pets.value = petRes.data.records
+      allPets.value = petRes.data.records
+      pets.value = pickRandom(allPets.value, HOME_DISPLAY_COUNT)
     }
 
-    // 获取商品列表
-    const goodsRes = await getGoodsList({ pageNum: 1, pageSize: 4 })
+    // 获取商品列表（拉取更多，前端随机展示部分）
+    const goodsRes = await getGoodsList({ pageNum: 1, pageSize: 20 })
     if (goodsRes.data?.records) {
-      goodsList.value = goodsRes.data.records
+      allGoods.value = goodsRes.data.records
+      goodsList.value = pickRandom(allGoods.value, HOME_DISPLAY_COUNT)
     }
 
     // 获取秒杀商品（使用列表接口获取所有状态的商品）
@@ -392,6 +431,12 @@ onMounted(() => {
 .section-header h2 {
   font-size: 22px;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-actions {
   display: flex;
   align-items: center;
   gap: 8px;

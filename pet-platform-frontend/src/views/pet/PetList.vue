@@ -5,16 +5,16 @@
       <el-form :inline="true" :model="searchForm" class="search-form">
         <el-form-item label="宠物类型">
           <el-select v-model="searchForm.petType" placeholder="全部" clearable @change="handleSearch">
-            <el-option label="狗狗" :value="1" />
-            <el-option label="猫咪" :value="2" />
-            <el-option label="其他" :value="3" />
+            <el-option label="狗狗" value="1" />
+            <el-option label="猫咪" value="2" />
+            <el-option label="其他" value="3" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="searchForm.status" placeholder="全部" clearable @change="handleSearch">
-            <el-option label="待领养" :value="0" />
-            <el-option label="已预约" :value="1" />
-            <el-option label="已领养" :value="2" />
+            <el-option label="待领养" value="0" />
+            <el-option label="已预约" value="1" />
+            <el-option label="已领养" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="关键词">

@@ -9,7 +9,7 @@
         <el-form-item label="商品分类">
           <el-select v-model="selectedCategory" placeholder="全部分类" clearable @change="handleCategoryChange">
             <el-option label="全部分类" value="" />
-            <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+            <el-option v-for="cat in categories" :key="cat.id" :label="cat.categoryName" :value="cat.id" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -113,9 +113,9 @@ const sortBy = ref('default')
 // 加载分类列表
 const loadCategories = async () => {
   try {
-    const res = await getCategoryList()
-    if (res.data) {
-      categories.value = res.data
+    const res = await getCategoryList({ pageNum: 1, pageSize: 100 })
+    if (res.data?.records) {
+      categories.value = res.data.records
     }
   } catch (error) {
     console.error('Load categories failed:', error)

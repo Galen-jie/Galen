@@ -14,7 +14,7 @@ public interface GoodsService {
 
     GoodsVO getGoodsById(Long id);
 
-    PageResult<GoodsVO> getGoodsList(int pageNum, int pageSize, Long categoryId, Integer status);
+    PageResult<GoodsVO> getGoodsList(int pageNum, int pageSize, Long categoryId, Integer status, String keyword, String sort, String order);
 
     boolean decreaseStock(Long id, Integer count);
 

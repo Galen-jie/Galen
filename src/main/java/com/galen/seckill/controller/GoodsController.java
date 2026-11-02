@@ -55,8 +55,11 @@ public class GoodsController {
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Integer status) {
-        PageResult<GoodsVO> result = goodsService.getGoodsList(pageNum, pageSize, categoryId, status);
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order) {
+        PageResult<GoodsVO> result = goodsService.getGoodsList(pageNum, pageSize, categoryId, status, keyword, sort, order);
         return Result.success(result);
     }
 }

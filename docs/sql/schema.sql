@@ -59,6 +59,7 @@ CREATE TABLE `goods` (
   `goods_detail` TEXT COMMENT '商品详情',
   `goods_price` DECIMAL(10,2) DEFAULT 0.00 COMMENT '商品价格',
   `stock` INT(11) DEFAULT 0 COMMENT '库存数量',
+  `sales` INT(11) DEFAULT 0 COMMENT '销量',
   `category_id` BIGINT(20) DEFAULT NULL COMMENT '分类ID',
   `status` TINYINT(1) DEFAULT 1 COMMENT '状态：0-下架，1-上架',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -157,11 +158,11 @@ INSERT INTO `goods_category` (`category_name`, `parent_id`, `sort`) VALUES
 ('服装', 0, 2);
 
 -- 插入商品数据
-INSERT INTO `goods` (`goods_name`, `goods_title`, `goods_img`, `goods_price`, `stock`, `category_id`) VALUES
-('iPhone 15 Pro', '苹果 iPhone 15 Pro 256GB 暗夜紫', 'https://via.placeholder.com/300', 8999.00, 100, 2),
-('MacBook Pro 14', '苹果 MacBook Pro 14英寸 M3芯片 16GB 512GB', 'https://via.placeholder.com/300', 14999.00, 50, 3),
-('HUAWEI Mate 60 Pro', '华为 Mate 60 Pro 12GB+512GB 雅丹黑', 'https://via.placeholder.com/300', 6999.00, 200, 2),
-('小米14', '小米14 徕卡光学镜头 骁龙8Gen3 16GB+512GB', 'https://via.placeholder.com/300', 4999.00, 300, 2);
+INSERT INTO `goods` (`goods_name`, `goods_title`, `goods_img`, `goods_price`, `stock`, `sales`, `category_id`) VALUES
+('iPhone 15 Pro', '苹果 iPhone 15 Pro 256GB 暗夜紫', 'https://via.placeholder.com/300', 8999.00, 100, 1000, 2),
+('MacBook Pro 14', '苹果 MacBook Pro 14英寸 M3芯片 16GB 512GB', 'https://via.placeholder.com/300', 14999.00, 50, 500, 3),
+('HUAWEI Mate 60 Pro', '华为 Mate 60 Pro 12GB+512GB 雅丹黑', 'https://via.placeholder.com/300', 6999.00, 200, 800, 2),
+('小米14', '小米14 徕卡光学镜头 骁龙8Gen3 16GB+512GB', 'https://via.placeholder.com/300', 4999.00, 300, 1200, 2);
 
 -- 插入秒杀商品数据
 INSERT INTO `seckill_goods` (`seckill_id`, `goods_id`, `seckill_price`, `stock_count`, `start_time`, `end_time`, `status`) VALUES

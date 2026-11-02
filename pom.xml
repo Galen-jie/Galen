@@ -77,6 +77,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- elasticsearch -->
 
         <!-- Spring Security Crypto (仅用于密码加密) -->
         <dependency>

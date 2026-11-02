@@ -26,6 +26,8 @@ public class GoodsVO {
 
     private Integer stock;
 
+    private Integer sales;
+
     private Long categoryId;
 
     private String categoryName;

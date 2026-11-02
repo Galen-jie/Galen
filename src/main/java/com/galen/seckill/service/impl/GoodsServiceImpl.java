@@ -95,7 +95,8 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public PageResult<GoodsVO> getGoodsList(int pageNum, int pageSize, Long categoryId, Integer status) {
+    public PageResult<GoodsVO> getGoodsList(int pageNum, int pageSize, Long categoryId, Integer status,
+                                            String keyword, String sort, String order) {
         Page<Goods> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
 
@@ -105,7 +106,11 @@ public class GoodsServiceImpl implements GoodsService {
         if (status != null) {
             wrapper.eq(Goods::getStatus, status);
         }
-        wrapper.orderByDesc(Goods::getCreateTime);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim();
+            wrapper.and(w -> w.like(Goods::getGoodsName, kw).or().like(Goods::getGoodsTitle, kw));
+        }
+        applySort(wrapper, sort, order);
 
         Page<Goods> result = goodsMapper.selectPage(page, wrapper);
 
@@ -114,6 +119,17 @@ public class GoodsServiceImpl implements GoodsService {
                 .collect(Collectors.toList());
 
         return new PageResult<>(result.getTotal(), result.getCurrent(), result.getSize(), voList);
+    }
+
+    private void applySort(LambdaQueryWrapper<Goods> wrapper, String sort, String order) {
+        boolean asc = "asc".equalsIgnoreCase(order);
+        if ("price".equalsIgnoreCase(sort)) {
+            wrapper.orderBy(true, asc, Goods::getGoodsPrice);
+        } else if ("sales".equalsIgnoreCase(sort)) {
+            wrapper.orderBy(true, asc, Goods::getSales);
+        } else {
+            wrapper.orderByDesc(Goods::getCreateTime);
+        }
     }
 
     @Override
